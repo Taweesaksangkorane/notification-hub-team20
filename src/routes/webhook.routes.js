@@ -25,7 +25,14 @@ async function handleServiceWebhook(serviceName, req, res) {
     const body = req.body || {};
     const signature =
       req.headers["x-event-signature"] || req.headers["x-webhook-signature"];
-    const secret = process.env.EVENT_WEBHOOK_SECRET;
+    function getWebhookSecret(serviceName) {
+  const secrets = {
+    jobboard: process.env.JOBBOARD_WEBHOOK_SECRET,
+    system2: process.env.SYSTEM2_WEBHOOK_SECRET,
+  };
+
+  return secrets[serviceName.toLowerCase()];
+}
 
     // Verify HMAC if signature is sent
     if (signature && secret) {
